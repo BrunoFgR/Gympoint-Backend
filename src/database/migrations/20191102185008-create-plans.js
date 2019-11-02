@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
       },
       duration: {
-        type: Sequelize.DATE,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       price: {
