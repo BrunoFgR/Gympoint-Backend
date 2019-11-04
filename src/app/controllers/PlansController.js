@@ -1,4 +1,4 @@
-import Plans from '../models/Plans';
+import Plans from '../models/Plan';
 import User from '../models/User';
 
 class PlansController {

@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import Students from '../models/Students';
+import Students from '../models/Student';
 import User from '../models/User';
 
 class StudentsController {
