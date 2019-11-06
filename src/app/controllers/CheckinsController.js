@@ -25,7 +25,9 @@ class CheckinsController {
       .map(day => {
         const listDay = format(day, 'yyyy-MM-dd', { locale: pt });
 
-        const checkDate = student.find(s => s.checkin === listDay);
+        const checkDate = student.find(
+          s => format(s.createdAt, 'yyyy-MM-dd', { locale: pt }) === listDay
+        );
 
         return checkDate;
       })
@@ -54,13 +56,15 @@ class CheckinsController {
       .map(day => {
         const listDay = format(day, 'yyyy-MM-dd', { locale: pt });
 
-        const checkDate = student.find(s => s.checkin === listDay);
+        const checkDate = student.find(
+          s => format(s.createdAt, 'yyyy-MM-dd', { locale: pt }) === listDay
+        );
 
         return checkDate;
       })
       .filter(d => d != null);
 
-    if (limitCheckin.length > 5) {
+    if (limitCheckin.length === 5) {
       return res
         .status(400)
         .json({ error: 'Student has a limit of 5 checkins' });
@@ -68,7 +72,9 @@ class CheckinsController {
 
     const compareDate = format(new Date(), 'yyyy-MM-dd', { locale: pt });
 
-    const checkinDay = student.find(c => c.checkin === compareDate);
+    const checkinDay = student.find(
+      c => format(c.createdAt, 'yyyy-MM-dd', { locale: pt }) === compareDate
+    );
 
     if (checkinDay) {
       return res.status(400).json({ error: 'Student already check in' });
