@@ -1,17 +1,10 @@
 import { eachDayOfInterval, addDays, startOfWeek, format } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-import User from '../models/User';
 import Checkin from '../models/Checkin';
 
 class CheckinsController {
   async index(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const student = await Checkin.findAll({
       where: { student_id: req.params.student_id },
     });
@@ -37,12 +30,6 @@ class CheckinsController {
   }
 
   async store(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const student = await Checkin.findAll({
       where: { student_id: req.params.student_id },
     });

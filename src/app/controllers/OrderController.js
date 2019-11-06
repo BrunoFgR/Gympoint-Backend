@@ -1,15 +1,8 @@
 import Order from '../schemas/Help_Order';
-import User from '../models/User';
 import Student from '../models/Student';
 
 class OrderController {
   async index(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const helpOrder = await Order.find().limit(20);
 
     const noAnswered = helpOrder.filter(o => o.answered === false);
@@ -18,12 +11,6 @@ class OrderController {
   }
 
   async store(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const studentExist = await Student.findByPk(req.params.student_id);
 
     if (!studentExist) {
