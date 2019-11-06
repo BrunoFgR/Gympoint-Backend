@@ -13,7 +13,7 @@ const OrderSchema = new mongoose.Schema(
     answer: {
       type: String,
     },
-    answer_at: {
+    answerAt: {
       type: Date,
     },
   },
@@ -29,7 +29,7 @@ const OrderSchema = new mongoose.Schema(
 );
 
 OrderSchema.virtual('answered').get(() => {
-  if (!this.answer_at) {
+  if (!this.answerAt) {
     return false;
   }
   return true;
