@@ -2,6 +2,14 @@ import * as Yup from 'yup';
 import Help_Order from '../schemas/Help_Order';
 
 class HelpStudentController {
+  async index(req, res) {
+    const help_orders = await Help_Order.find({
+      student_id: req.params.id,
+    }).limit(20);
+
+    return res.json(help_orders);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       answer: Yup.string().required(),
@@ -14,6 +22,7 @@ class HelpStudentController {
     const findOrder = await Help_Order.findOneAndUpdate(
       { _id: req.params.id },
       {
+        answered: true,
         answer: req.body.answer,
         answerAt: new Date().getTime(),
       },

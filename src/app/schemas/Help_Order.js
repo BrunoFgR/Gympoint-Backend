@@ -16,6 +16,11 @@ const OrderSchema = new mongoose.Schema(
     answerAt: {
       type: Date,
     },
+    answered: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -27,12 +32,5 @@ const OrderSchema = new mongoose.Schema(
     },
   }
 );
-
-OrderSchema.virtual('answered').get(() => {
-  if (!this.answerAt) {
-    return false;
-  }
-  return true;
-});
 
 export default mongoose.model('Help_Order', OrderSchema);

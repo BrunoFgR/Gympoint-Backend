@@ -2,12 +2,10 @@ import Order from '../schemas/Help_Order';
 import Student from '../models/Student';
 
 class OrderController {
-  async index(req, res) {
-    const helpOrder = await Order.find().limit(20);
+  async index(_, res) {
+    const helpOrder = await Order.find({ answered: false }).limit(20);
 
-    const noAnswered = helpOrder.filter(o => o.answered === false);
-
-    return res.json(noAnswered);
+    return res.json(helpOrder);
   }
 
   async store(req, res) {
