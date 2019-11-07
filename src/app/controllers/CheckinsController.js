@@ -1,7 +1,8 @@
-import { eachDayOfInterval, addDays, startOfWeek, format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
+import { eachDayOfInterval, addDays, startOfWeek } from 'date-fns';
+import formatDate from '../../utils/formatDate';
 
 import Checkin from '../models/Checkin';
+import Registration from '../models/Registration';
 
 class CheckinsController {
   async index(req, res) {
@@ -16,10 +17,10 @@ class CheckinsController {
 
     const limitCheckin = dayOfWeek
       .map(day => {
-        const listDay = format(day, 'yyyy-MM-dd', { locale: pt });
+        const listDay = formatDate(day);
 
         const checkDate = student.find(
-          s => format(s.createdAt, 'yyyy-MM-dd', { locale: pt }) === listDay
+          s => formatDate(s.createdAt) === listDay
         );
 
         return checkDate;
@@ -30,6 +31,14 @@ class CheckinsController {
   }
 
   async store(req, res) {
+    const RegistrationExists = await Registration.findOne({
+      where: { student_id: req.params.student_id },
+    });
+
+    if (!RegistrationExists) {
+      return res.status(400).json({ error: 'student did not enroll' });
+    }
+
     const student = await Checkin.findAll({
       where: { student_id: req.params.student_id },
     });
@@ -41,10 +50,10 @@ class CheckinsController {
 
     const limitCheckin = dayOfWeek
       .map(day => {
-        const listDay = format(day, 'yyyy-MM-dd', { locale: pt });
+        const listDay = formatDate(day);
 
         const checkDate = student.find(
-          s => format(s.createdAt, 'yyyy-MM-dd', { locale: pt }) === listDay
+          s => formatDate(s.createdAt) === listDay
         );
 
         return checkDate;
@@ -57,10 +66,10 @@ class CheckinsController {
         .json({ error: 'Student has a limit of 5 checkins' });
     }
 
-    const compareDate = format(new Date(), 'yyyy-MM-dd', { locale: pt });
+    const compareDate = formatDate(new Date());
 
     const checkinDay = student.find(
-      c => format(c.createdAt, 'yyyy-MM-dd', { locale: pt }) === compareDate
+      c => formatDate(c.createdAt) === compareDate
     );
 
     if (checkinDay) {
