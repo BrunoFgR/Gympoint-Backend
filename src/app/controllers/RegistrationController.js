@@ -1,6 +1,8 @@
-import { addMonths, parseISO } from 'date-fns';
+import { addMonths, format, parseISO } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import * as Yup from 'yup';
 
+import formatPrice from '../../utils/formatPrice';
 import Registration from '../models/Registration';
 import User from '../models/User';
 import Student from '../models/Student';
@@ -78,7 +80,15 @@ class RegistrationController {
     await Mail.sendMail({
       to: `${student.name} <${student.email}>`,
       subject: 'Seja bem-vindo a Gympoint',
-      text: 'Email de boas vindas',
+      template: 'welcome',
+      context: {
+        student: student.name,
+        plan: planExist.title,
+        registration: format(end_date, "dd 'de' MMMM 'de' yyyy", {
+          locale: pt,
+        }),
+        price: formatPrice(data.price),
+      },
     });
 
     return res.json(data);
