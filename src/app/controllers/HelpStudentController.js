@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
 import Help_Order from '../schemas/Help_Order';
 import Student from '../models/Student';
-import Mail from '../../lib/Mail';
+import Queue from '../../lib/Queue';
+import AnswerMail from '../jobs/AnswerMail';
 
 class HelpStudentController {
   async index(req, res) {
@@ -33,10 +34,9 @@ class HelpStudentController {
 
     const student = await Student.findByPk(findOrder.student_id);
 
-    await Mail.sendMail({
-      to: `${student.name}<${student.email}>`,
-      subject: 'Resposta da acadêmia',
-      text: 'Resposta da acadêmia',
+    await Queue.add(AnswerMail.key, {
+      student,
+      findOrder,
     });
 
     return res.json(findOrder);

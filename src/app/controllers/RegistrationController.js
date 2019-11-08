@@ -1,13 +1,14 @@
-import { addMonths, format, parseISO } from 'date-fns';
-import pt from 'date-fns/locale/pt';
+import { addMonths, parseISO } from 'date-fns';
+
 import * as Yup from 'yup';
 
-import formatPrice from '../../utils/formatPrice';
 import Registration from '../models/Registration';
 import User from '../models/User';
 import Student from '../models/Student';
 import Plan from '../models/Plan';
-import Mail from '../../lib/Mail';
+
+import WelcomeMail from '../jobs/WelcomeMail';
+import Queue from '../../lib/Queue';
 
 class RegistrationController {
   async index(req, res) {
@@ -77,18 +78,11 @@ class RegistrationController {
 
     const student = await Student.findByPk(student_id);
 
-    await Mail.sendMail({
-      to: `${student.name} <${student.email}>`,
-      subject: 'Seja bem-vindo a Gympoint',
-      template: 'welcome',
-      context: {
-        student: student.name,
-        plan: planExist.title,
-        registration: format(end_date, "dd 'de' MMMM 'de' yyyy", {
-          locale: pt,
-        }),
-        price: formatPrice(data.price),
-      },
+    await Queue.add(WelcomeMail.key, {
+      student,
+      planExist,
+      data,
+      end_date,
     });
 
     return res.json(data);
