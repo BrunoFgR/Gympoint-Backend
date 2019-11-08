@@ -3,7 +3,9 @@ import * as Yup from 'yup';
 
 import Registration from '../models/Registration';
 import User from '../models/User';
+import Student from '../models/Student';
 import Plan from '../models/Plan';
+import Mail from '../../lib/Mail';
 
 class RegistrationController {
   async index(req, res) {
@@ -47,9 +49,11 @@ class RegistrationController {
 
     const { student_id, plan_id, start_date } = req.body;
 
-    const studentExist = await Registration.findOne({ where: { student_id } });
+    const registrationExists = await Registration.findOne({
+      where: { student_id },
+    });
 
-    if (studentExist) {
+    if (registrationExists) {
       return res
         .status(400)
         .json({ error: 'The student has already been enrolled' });
@@ -68,6 +72,14 @@ class RegistrationController {
     const data = { ...req.body, end_date, price: price * duration };
 
     await Registration.create(data);
+
+    const student = await Student.findByPk(student_id);
+
+    await Mail.sendMail({
+      to: `${student.name} <${student.email}>`,
+      subject: 'Seja bem-vindo a Gympoint',
+      text: 'Email de boas vindas',
+    });
 
     return res.json(data);
   }
