@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "queue": "nodemon src/Queue.js"
+    "queue": "nodemon src/Queue.js",
+    "test": "NODE_ENV=test jest"
   },
   "dependencies": {
     "@sentry/node": "5.7.1",
@@ -28,11 +29,14 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@sucrase/jest-plugin": "^2.0.0",
+    "@types/jest": "^24.0.22",
     "eslint": "^6.6.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^24.9.0",
     "nodemon": "^1.19.4",
     "prettier": "^1.18.2",
     "sequelize-cli": "^5.5.1",

@@ -76,9 +76,10 @@ class StudentsController {
       return res.status(401).json({ error: 'User not exists' });
     }
 
-    const { name, age, weight, height } = await student.update(req.body);
+    const { id, name, age, weight, height } = await student.update(req.body);
 
     return res.json({
+      id,
       name,
       email,
       age,
