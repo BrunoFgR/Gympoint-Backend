@@ -20,8 +20,8 @@ routes.get('/students/:student_id/checkins', CheckinsController.index);
 routes.post('/students/:student_id/help_orders', OrderController.store);
 routes.get('/students/help_orders', OrderController.index);
 
-routes.post('/help_orders/:id/answer', HelpStudentController.store);
-routes.get('/students/:id/help-orders', HelpStudentController.index);
+routes.put('/help_orders/:id/answer', HelpStudentController.update);
+routes.get('/students/:id/help_orders', HelpStudentController.index);
 
 routes.use(authMiddleware);
 

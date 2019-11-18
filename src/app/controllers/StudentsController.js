@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import Students from '../models/Student';
-import User from '../models/User';
 
 class StudentsController {
   async store(req, res) {
@@ -18,12 +17,6 @@ class StudentsController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(401).json({ error: 'Validation fails' });
-    }
-
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
     }
 
     const { email } = req.body;
@@ -60,12 +53,6 @@ class StudentsController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(401).json({ error: 'Validation fails' });
-    }
-
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
     }
 
     const { email } = req.body;

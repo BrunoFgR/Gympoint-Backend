@@ -3,7 +3,6 @@ import { addMonths, parseISO } from 'date-fns';
 import * as Yup from 'yup';
 
 import Registration from '../models/Registration';
-import User from '../models/User';
 import Student from '../models/Student';
 import Plan from '../models/Plan';
 
@@ -12,12 +11,6 @@ import Queue from '../../lib/Queue';
 
 class RegistrationController {
   async index(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const registrations = await Registration.findAll({
       attributes: [
         'id',
@@ -34,12 +27,6 @@ class RegistrationController {
   }
 
   async store(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const schema = Yup.object().shape({
       student_id: Yup.number().required(),
       plan_id: Yup.number().required(),
@@ -52,6 +39,12 @@ class RegistrationController {
 
     const { student_id, plan_id, start_date } = req.body;
 
+    const planExist = await Plan.findByPk(plan_id);
+
+    if (!planExist) {
+      return res.status(400).json({ error: 'Plan not already exist' });
+    }
+
     const registrationExists = await Registration.findOne({
       where: { student_id },
     });
@@ -62,19 +55,15 @@ class RegistrationController {
         .json({ error: 'The student has already been enrolled' });
     }
 
-    const planExist = await Plan.findByPk(plan_id);
-
-    if (!planExist) {
-      return res.status(400).json({ error: 'Plan not already exist' });
-    }
-
     const { price, duration } = planExist;
 
     const end_date = addMonths(parseISO(start_date), duration);
 
     const data = { ...req.body, end_date, price: price * duration };
 
-    await Registration.create(data);
+    const registration = await Registration.create(data);
+
+    const { id } = registration;
 
     const student = await Student.findByPk(student_id);
 
@@ -85,16 +74,10 @@ class RegistrationController {
       end_date,
     });
 
-    return res.json(data);
+    return res.json({ ...data, id });
   }
 
   async update(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const schema = Yup.object().shape({
       plan_id: Yup.number().required(),
     });
@@ -105,16 +88,16 @@ class RegistrationController {
 
     const { id } = req.params;
 
-    const registration = await Registration.findByPk(id);
-
-    if (!registration) {
-      return res.status(401).json({ error: 'Registration does not exists' });
-    }
-
     const planExist = await Plan.findByPk(req.body.plan_id);
 
     if (!planExist) {
       return res.status(400).json({ error: 'Plan not already exist' });
+    }
+
+    const registration = await Registration.findByPk(id);
+
+    if (!registration) {
+      return res.status(401).json({ error: 'Registration does not exists' });
     }
 
     const { price, duration } = planExist;
@@ -135,12 +118,6 @@ class RegistrationController {
   }
 
   async delete(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const RegistrationExist = await Registration.findByPk(req.params.id);
 
     if (!RegistrationExist) {

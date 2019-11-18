@@ -1,14 +1,7 @@
 import Plans from '../models/Plan';
-import User from '../models/User';
 
 class PlansController {
   async index(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const plans = await Plans.findAll({
       attributes: ['id', 'title', 'duration', 'price'],
     });
@@ -17,12 +10,6 @@ class PlansController {
   }
 
   async store(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const planExists = await Plans.findOne({
       where: { duration: req.body.duration },
     });
@@ -44,12 +31,6 @@ class PlansController {
   }
 
   async update(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const { id } = req.params;
 
     const plan = await Plans.findOne({ where: { id } });
@@ -68,12 +49,6 @@ class PlansController {
   }
 
   async delete(req, res) {
-    const user = await User.findOne({ where: { id: req.userId } });
-
-    if (!user) {
-      return res.status(401).json({ error: 'User is not an administrator' });
-    }
-
     const { id } = req.params;
 
     const plan = await Plans.findOne({ where: { id } });

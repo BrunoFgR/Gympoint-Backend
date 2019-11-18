@@ -6,7 +6,7 @@ class AnswerMail {
   }
 
   async handle({ data }) {
-    const { student, findOrder } = data;
+    const { student, answerHelp } = data;
 
     await Mail.sendMail({
       to: `${student.name}<${student.email}>`,
@@ -14,8 +14,8 @@ class AnswerMail {
       template: 'answer',
       context: {
         student: student.name,
-        question: findOrder.question,
-        answer: findOrder.answer,
+        question: answerHelp.question,
+        answer: answerHelp.answer,
       },
     });
   }
