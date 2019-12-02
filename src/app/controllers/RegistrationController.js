@@ -19,8 +19,10 @@ class RegistrationController {
         'start_date',
         'end_date',
         'price',
+        'active',
       ],
       order: ['id'],
+      limit: 10,
     });
 
     return res.json(registrations);
